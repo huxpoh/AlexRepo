@@ -8,12 +8,13 @@ namespace Google.Apis.Sample.MVC.Models
     {
         public FileModel()
         {
-            DownloadUrl = new List<string>();
+            ExprotList = new List<string>();
         }
 
         public string Id { get; set; }
         public string Title { get; set; }
         public DateTime? CreatedDate { get; set; }
-        public List<string> DownloadUrl { get; set; }
+        public string DownloadUrl { get; set; }
+        public List<string> ExprotList { get; set; }
     }
 }

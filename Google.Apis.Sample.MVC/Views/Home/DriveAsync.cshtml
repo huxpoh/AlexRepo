@@ -13,6 +13,10 @@
             Created Date
         </th>
         <th>
+            Actions
+        </th>
+         <th>
+            Query
         </th>
     </tr>
     @foreach (var file in Model)
@@ -25,10 +29,13 @@
                 @Html.DisplayFor(modelItem => file.CreatedDate)
             </td>
             <td>
-               @foreach (var ff in file.DownloadUrl)
-               {
-                    <a href="@ff" class = "btn btn-xs btn-success">Save as @ff.Substring(ff.LastIndexOf('=')+1)</a>
-               }
+                @foreach (var ff in file.ExprotList)
+                {
+                    <a href="@ff" class = "btn btn-xs btn-success">Save as @ff.Substring(ff.LastIndexOf('=') + 1)</a>
+                }
+            </td>
+            <td>
+                <a href="/Home/query/?fileId=@file.Id" class = "btn btn-xs btn-warning">Querying</a>
             </td>
         </tr>
     }
