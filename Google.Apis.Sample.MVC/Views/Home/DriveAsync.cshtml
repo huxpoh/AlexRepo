@@ -16,7 +16,7 @@
             Actions
         </th>
          <th>
-            Query
+            Filtering
         </th>
     </tr>
     @foreach (var file in Model)
@@ -34,8 +34,15 @@
                     <a href="@ff" class = "btn btn-xs btn-success">Save as @ff.Substring(ff.LastIndexOf('=') + 1)</a>
                 }
             </td>
+
             <td>
-                <a href="/Home/query/?fileId=@file.Id" class = "btn btn-xs btn-warning">Querying</a>
+                  @foreach (var ff in file.ExprotList){
+                    if (ff.Substring(ff.LastIndexOf('=') + 1) == "xlsx")
+                    {
+                       <a href="/Home/query/?downloaduri=@ff" class = "btn btn-xs btn-warning">Querying</a>
+                    }
+                }
+                
             </td>
         </tr>
     }

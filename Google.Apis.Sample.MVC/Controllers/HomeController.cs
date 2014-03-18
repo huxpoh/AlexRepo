@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Mvc;
@@ -9,11 +10,8 @@ using Google.Apis.Services;
 
 namespace Google.Apis.Sample.MVC.Controllers
 {
-
     public class HomeController : Controller
     {
-        private const int KB = 0x400;
-        private const int DownloadChunkSize = 256 * KB;
 
         public ActionResult Index()
         {
@@ -32,8 +30,8 @@ namespace Google.Apis.Sample.MVC.Controllers
         {
             ViewBag.Message = "Your drive page.";
 
-            var result = await new AuthorizationCodeMvcApp(this, new AppAuthFlowMetadata()).
-                AuthorizeAsync(cancellationToken);
+            var result =
+                await new AuthorizationCodeMvcApp(this, new AppAuthFlowMetadata()).AuthorizeAsync(cancellationToken);
 
             if (result.Credential == null)
                 return new RedirectResult(result.RedirectUri);
@@ -43,7 +41,6 @@ namespace Google.Apis.Sample.MVC.Controllers
                 HttpClientInitializer = result.Credential,
                 ApplicationName = "ASP.NET Google APIs MVC Sample"
             });
-
 
             var listReq = driveService.Files.List();
             listReq.Fields = "items/title,items/id,items/createdDate,items/downloadUrl,items/exportLinks";
@@ -60,49 +57,22 @@ namespace Google.Apis.Sample.MVC.Controllers
             })).OrderBy(f => f.Title).ToList();
             return View(items);
         }
+        
 
+        [Authorize]
+        public async Task<ActionResult> Query(CancellationToken cancellationToken, string downloaduri)
+        {
+            var result = await new AuthorizationCodeMvcApp(this, new AppAuthFlowMetadata()).AuthorizeAsync(cancellationToken);
 
-        //[Authorize]
-        //public async Task<ActionResult> Query(CancellationToken cancellationToken, string fileId)
-        //{
-        //    var result = await new AuthorizationCodeMvcApp(this, new AppAuthFlowMetadata()).
-        //       AuthorizeAsync(cancellationToken);
+            using (var client = new WebClient())
+            {
+                client.Headers.Add("Authorization", string.Format("Bearer {0}", result.Credential.Token.AccessToken));
+                client.DownloadFile(downloaduri + "&exportFormat=xlsx", Server.MapPath(string.Format("~/Temp/{0}.xlsx", result.Credential.Token.AccessToken)));
+                
+            }
 
-        //    if (result.Credential == null)
-        //        return new RedirectResult(result.RedirectUri);
-
-        //    var driveService = new DriveService(new BaseClientService.Initializer
-        //    {
-        //        HttpClientInitializer = result.Credential,
-        //        ApplicationName = "ASP.NET Google APIs MVC Sample"
-        //    });
-
-        //    var file = driveService.Files.Get(fileId).Execute();
-
-        //    var downloader = new MediaDownloader(driveService);
-
-        //    //using (FileStream fs = System.IO.File.Create("D:\\file2.xslx"))
-        //    //{
-        //    //    downloader.Download(file.SelfLink, fs);
-        //    //}
-
-        //    using (FileStream fs = System.IO.File.Create("D:\\file3.xslx"))
-        //    {
-        //        downloader.Download(file.ExportLinks.FirstOrDefault(x=>x.Value.Contains("sheet")).Value, fs);
-        //    }
-
-        //    return new EmptyResult();
-        //}
-
-
-
-
-
-        //[Authorize]
-        //public ActionResult Filtring(string downloadurl)
-        //{
-
-        //    return new EmptyResult();
-        //}
+            return new EmptyResult();
+        }
     }
+
 }

@@ -1,0 +1,36 @@
+ GDataCredentials cre =
+                new GDataCredentials(
+                    "clhnh-SX2aVBPxXlCCjib9Mi0q3wj9n2qD4VabQLWmXMcDBuErOX_7GSDIVpOaZrvfmpN9ENnYKaJL4UtUE0khLCdR3XTk-OqU-tIN-V75U1");
+
+            var settings = new RequestSettings("ASP.NET Google APIs MVC Sample", cre);
+            settings.AutoPaging = true;
+            settings.PageSize = 100;
+            var documentsRequest = new DocumentsRequest(settings);
+            var documentFeed = documentsRequest.GetDocuments();
+            foreach (Document document in documentFeed.Entries)
+            {
+                Document.DownloadType type = Document.DownloadType.xls;
+
+                Stream downloadStream = documentsRequest.Download(document, type);
+
+                Stream fileSaveStream = new FileStream(string.Format(@"D:\{0}.xlsx", document.Title), FileMode.CreateNew);
+
+                if (fileSaveStream != null)
+                {
+                    int nBytes = 2048;
+                    int count = 0;
+                    Byte[] arr = new Byte[nBytes];
+
+                    do
+                    {
+                        count = downloadStream.Read(arr, 0, nBytes);
+                        fileSaveStream.Write(arr, 0, count);
+
+                    } while (count > 0);
+                    fileSaveStream.Flush();
+                    fileSaveStream.Close();
+                }
+                downloadStream.Close();
+
+               
+            }

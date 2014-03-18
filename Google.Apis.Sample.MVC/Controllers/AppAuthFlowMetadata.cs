@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Web.Mvc;
+using Google.GData.Documents;
 using Microsoft.AspNet.Identity;
 
 using Google.Apis.Auth.OAuth2;
@@ -20,8 +21,7 @@ namespace Google.Apis.Sample.MVC.Controllers
                         ClientId = "187452204195-mtkhnagqb7vdamgg4q0k21do9oiqa93d.apps.googleusercontent.com",
                         ClientSecret = "8wCz9quXgKn1u60zmWkSKpXy"
                     },
-                    Scopes = new[] { DriveService.Scope.Drive },
-                    // TODO: maybe in a future post I'll demonstrate a new EFDataStore usage.
+                    Scopes = new[] { DriveService.Scope.Drive},
                     DataStore = new FileDataStore("Google.Apis.Sample.MVC")
                 });
 
