@@ -15,9 +15,9 @@
         <th>
             Actions
         </th>
-         <th>
+@*         <th>
             Filtering
-        </th>
+        </th>*@
     </tr>
     @foreach (var file in Model)
     {
@@ -35,15 +35,14 @@
                 }
             </td>
 
-            <td>
+@*            <td>
                   @foreach (var ff in file.ExprotList){
                     if (ff.Substring(ff.LastIndexOf('=') + 1) == "xlsx")
                     {
                        <a href="/Home/query/?downloaduri=@ff" class = "btn btn-xs btn-warning">Querying</a>
                     }
                 }
-                
-            </td>
+            </td>*@
         </tr>
     }
 </table>
