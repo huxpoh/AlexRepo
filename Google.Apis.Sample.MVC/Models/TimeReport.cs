@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Google.Apis.Sample.MVC.Models
+﻿namespace Google.Apis.Sample.MVC.Models
 {
     public class TimeReport
     {

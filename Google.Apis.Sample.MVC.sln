@@ -1,8 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.21005.1
-MinimumVisualStudioVersion = 10.0.40219.1
+# Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Google.Apis.Sample.MVC", "Google.Apis.Sample.MVC\Google.Apis.Sample.MVC.csproj", "{EC134BD2-D66F-454A-BC12-50519A39B7BD}"
 EndProject
 Global

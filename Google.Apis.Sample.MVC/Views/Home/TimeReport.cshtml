@@ -4,74 +4,20 @@
 }
 @section scripts
 {
+    <script src="~/Scripts/App/TimeReport.js"></script>
+    <script src="~/Scripts/App/TimeReportViewModel.js"></script>
+    <script src="~/Scripts/App/AcrowireViewModel.js"></script>
     <script type="text/javascript">
-        function timeReport() {
-            var self = this;
-            self.Date = ko.observable("");
-            self.Project = ko.observable("");
-            self.Task = ko.observable("");
-            self.Type = ko.observable("");
-            self.Description = ko.observable("");
-            self.Duration = ko.observable(0);
-            self.Overtime = ko.observable(0);
-        };
-
-        var TimeReportViewModel = function (items) {
-            var self = this;
-            self.items = ko.observableArray(items);
-            self.repository = [];
-
-
-            self.FilterProject = ko.observable("");
-            self.FilterTotalHours = ko.observable(0);
-            self.FilterTotalOverTime = ko.observable(0);
-
-            self.FilterDateFrom = ko.observable("");
-            self.FilterDateTo = ko.observable("");
-
-            self.PopulateArray = function() {
-                $.ajax({
-                    url: "/Home/GetTimeReport",
-                    async:true,
-                    context: document.body
-                }).done(function (data) {
-                    self.items(data.GridList);
-                    self.repository = data.GridList;
-                });
-            };
-
-            self.Filter = function () {
-                var result = [];
-                for (var i = 0; i < self.repository.length; i++) {
-                    if (self.repository[i].Project == self.FilterProject()) {
-                        self.FilterTotalHours(self.FilterTotalHours() + self.repository[i].Duration);
-                        self.FilterTotalOverTime(self.FilterTotalOverTime() + self.repository[i].Overtime);
-                        result.push(self.repository[i]);
-                    }
-                }
-                $("#Res").show();
-                self.items(result);
-            };
-
-            self.ResetFilter = function() {
-                self.FilterTotalHours(0);
-                self.items(self.repository);
-                self.FilterProject("");
-                $("#Res").hide();
-            };
-
-            self.PopulateArray();
-        };
         var vModel = new TimeReportViewModel();
+
         ko.applyBindings(vModel);
-
     </script>
-
 }
-<h1>Time reports</h1>
+
 <div class="row">
     <div class="col-xs-4">
-        <table class="table table-bordered table-condensed">
+        <h1>Time report Dev Pro</h1>
+        <table class="table table-bordered">
             <thead>
                 <tr>
                     <th><strong>Date</strong></th>
@@ -96,22 +42,67 @@
             </tbody>
         </table>
     </div>
+    <div class="col-xs-6" style="white-space: normal">
+        <h1 class="pull-left">Acrowire</h1>
+        <form class="navbar-form pull-right">
+            <div class="form-group">
+                <input type="text" class="form-control" placeholder="Login" data-bind="value:vModel.acroLogin">
+            </div>
+            <div class="form-group">
+                <input type="password" class="form-control" placeholder="Password" data-bind="value: vModel.acroPassword">
+            </div>
+            <button class="btn btn-success" data-bind="click: vModel.SetAcroCookie">Set And Refresh</button>
+        </form>
+        <table class="table table-bordered table-condensed">
+            <thead>
+                <tr>
+                    <th><strong>Date</strong></th>
+                    <th><strong>Person</strong></th>
+                    <th><strong>Project</strong></th>
+                    <th><strong>Summary</strong></th>
+                    <th><strong>Billing Status</strong></th>
+                    <th><strong>Hours</strong></th>
+                </tr>
+            </thead>
+            <tbody data-bind="foreach: vModel.acroItems">
+                <tr>
+                    <td data-bind="text: Date"></td>
+                    <td data-bind="text: Person"></td>
+                    <td data-bind="text: Project"></td>
+                    <td data-bind="text: Summary"></td>
+                    <td data-bind="text: BillingStatus"></td>
+                    <td data-bind="text: Hours"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
     <div class="col-xs-2">
+        <h1>Filter</h1>
         <div class="well">
             <div class="form-group">
                 <label for="ProjectType">Project Type</label>
-                <input type="text" placeholder="Project Type"  data-bind="value: vModel.FilterProject" id="ProjectType" class="form-control">
+                <input type="text" autocomplete="off" placeholder="Project Type" data-bind="value: vModel.FilterProject" id="ProjectType" class="form-control input-sm">
             </div>
-            <button class="btn btn-sm btn-success" data-bind="click: vModel.Filter">Query</button>
-            <button class="btn btn-sm btn-warning" data-bind="click: vModel.ResetFilter">Reset Filter</button>
-            <hr />
+            <div class="form-group">
+                <label for="ProjectType">From:</label>
+                <input data-bind='datepicker: vModel.FilterDateFrom' autocomplete="off" class="form-control input-sm" />
+                <label for="ProjectType">To:</label>
+                <input data-bind='datepicker: vModel.FilterDateTo' autocomplete="off" class="form-control input-sm" />
+            </div>
+            <div class="">
+                <button class="btn btn-sm btn-success" data-bind="click: function () { vModel.Filter(); vModel.FilterAcro(); }">Query</button>
+                <button class="btn btn-sm btn-warning" data-bind="click: function () { vModel.ResetFilter(); }">Reset Filter</button>
+                <hr />
+                <div class="form-group" id="Res" style="display: none">
+                    <label>Totaly Hours</label>
+                    <p data-bind="text: vModel.FilterTotalHours"></p>
+                    <label>Totaly OverTime</label>
+                    <p data-bind="text: vModel.FilterTotalOverTime"></p>
+                </div>
+            </div>
 
-            <div class="form-group" id="Res" style="display: none">
-                <label >Totaly Hours</label>
-                <p data-bind="text: vModel.FilterTotalHours"></p>
-                <label >Totaly OverTime</label>
-                <p data-bind="text: vModel.FilterTotalOverTime"></p>
-            </div>
         </div>
     </div>
 </div>
+
